@@ -1,0 +1,31 @@
+# See https://github.com/cased/jump#writing-queries for docs and examples
+queries:
+  - provider: static
+    prompt:
+      name: example bastion
+      description: bastion vm
+      featured: true
+      username: cased-shell
+      hostname: 10.128.0.2
+      labels:
+        app: bastion
+        type: interactive
+
+  - provider: static
+    prompt:
+      name: cloud shell
+      description: an authorized cloud shell session
+      featured: true
+      username: cased-shell
+      hostname: 10.128.0.2
+      shellCommand: bash -ic 'exec gcloud cloud-shell ssh --authorize-session'
+      closeTerminalOnExit: false
+
+  - provider: static
+    prompt:
+      name: list instances
+      description: list all compute instances
+      username: cased-shell
+      hostname: 10.128.0.2
+      shellCommand: bash -ic 'exec gcloud compute instances list'
+      closeTerminalOnExit: false
