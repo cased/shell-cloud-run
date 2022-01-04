@@ -11,10 +11,10 @@ export CASED_SHELL_TLS=off
 export STORAGE_DIR=$HOME/.cased-shell
 : ${CASED_SHELL_LOG_LEVEL:="error"}
 
-echo "parsing jump config"
-ONCE=true /bin/jump /jump.yml /tmp/jump.json
+/bin/jump /jump.yml /tmp/jump.json &
 
 export CASED_SHELL_HOST_FILE=/tmp/jump.json
 
-echo "starting cased shell server"
-exec python -u run.py --logging=$CASED_SHELL_LOG_LEVEL
+python -u run.py --logging=$CASED_SHELL_LOG_LEVEL &
+ps axjf
+wait -n

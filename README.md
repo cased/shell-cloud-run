@@ -1,6 +1,7 @@
 # shell-cloud-run
 
 An example deployment of [Cased Shell](https://cased.com) on Google Cloud Run.
+
 ## Setup
 
 ```
@@ -39,7 +40,7 @@ gcloud compute networks create cased-shell-example-vpc --project=cased-shell-dem
 gcloud compute firewall-rules create allow-ssh --network cased-shell-example-vpc --allow tcp:22,icmp
 ```
 
-And an instance within it:
+And an instance within it with no public address:
 
 ```
 gcloud compute instances create example-bastion --image-project debian-cloud --image-family debian-11 --zone=us-central1-a --network=cased-shell-example-vpc
