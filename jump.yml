@@ -6,26 +6,16 @@ queries:
       description: bastion vm
       featured: true
       username: cased-shell
-      hostname: 10.128.0.2
+      hostname: 10.128.0.4
       labels:
         app: bastion
         type: interactive
 
   - provider: static
     prompt:
-      name: cloud shell
-      description: an authorized cloud shell session
-      featured: true
-      username: cased-shell
-      hostname: 10.128.0.2
-      shellCommand: bash -ic 'exec gcloud cloud-shell ssh --authorize-session'
-      closeTerminalOnExit: false
-
-  - provider: static
-    prompt:
       name: list instances
       description: list all compute instances
       username: cased-shell
-      hostname: 10.128.0.2
-      shellCommand: bash -ic 'exec gcloud compute instances list'
+      hostname: 10.128.0.4
+      shellCommand: bash -ic 'gcloud compute instances list'
       closeTerminalOnExit: false

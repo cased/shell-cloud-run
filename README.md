@@ -20,7 +20,7 @@ gcloud run deploy cased-shell \
 * Obtain the value of CASED_SHELL_SECRET from the settings tab
 * Enable Certificate Authentication on the settings tab
 
-### Re-deploy the authenticated shell with:
+### Deploy the authenticated shell
 
 ```
 gcloud run deploy cased-shell \
@@ -30,30 +30,34 @@ gcloud run deploy cased-shell \
   --source=. \
   --set-env-vars="CASED_SHELL_HOSTNAME=<your hostname>,CASED_SHELL_SECRET=<your secret>"
 ```
-
 ## Connecting to resources in a VPC
 
 ### Create a VPC:
 
 ```
-gcloud compute networks create cased-shell-example-vpc --project=cased-shell-demos --subnet-mode=auto --mtu=1460 --bgp-routing-mode=regional
+gcloud compute networks create cased-shell-example-vpc --subnet-mode=auto --mtu=1460 --bgp-routing-mode=regional
 gcloud compute firewall-rules create allow-ssh --network cased-shell-example-vpc --allow tcp:22,icmp
 ```
 
-And an instance within it with no public address:
+And an instance within the VPC:
 
 ```
 gcloud compute instances create example-bastion --image-project debian-cloud --image-family debian-11 --zone=us-central1-a --network=cased-shell-example-vpc
 ```
 
-### Configure the instance
+Update `jump.yaml` to point it to the internal IP address of the bastion node.
+
+> Note: Stay tuned for support for auto-detecting Google Cloud Compute instances in the near future!
+
+### Configure the bastion instance
+
+Create a user on the instance and add the SSH certificate to the user's authorized_keys file:
 
 ```
-gcloud compute ssh cased-shell@example-bastion
+gcloud compute ssh cased-shell@example-bastion --command="curl https://<Cased Shell Hostname>/.ssh/authorized_keys >> ~/.ssh/authorized_keys"
 ```
 
-* Run the commands from the Settings tab to enable access from all users in your org.
-* Add the following to the end of `~/.bashrc`:
+Optionally, add the following to the end of `~/.bashrc` to individually authenticate users of bastion node with their own Google Cloud accounts:
 
 ```
 # Create and enter a temporary directory
@@ -68,6 +72,7 @@ export HOME=$dir
 
 # Login to gcloud when commands are interactive or gcloud related
 if [ "$0" == "-bash" ] || grep -q "gcloud" <<< "$BASH_EXECUTION_STRING"; then
+  gcloud config set account NONE
   gcloud auth login --brief --no-launch-browser
 fi
 ```
