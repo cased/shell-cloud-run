@@ -13,6 +13,19 @@ queries:
 
   - provider: static
     prompt:
+      name: cloudshell
+      description: 
+      featured: true
+      username: cased-shell
+      hostname: localhost
+      port: $SSH_PORT
+      labels:
+        app: bastion
+        type: interactive
+      closeTerminalOnExit: false
+
+  - provider: static
+    prompt:
       name: list instances
       description: list all compute instances
       username: cased-shell

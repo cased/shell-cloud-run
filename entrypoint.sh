@@ -17,9 +17,12 @@ export CASED_SHELL_OAUTH_UPSTREAM=localhost:$SSH_PORT
 echo "starting ssh server"
 PORT=$SSH_PORT /bin/ssh-oauth-handlers cloudshell https://$CASED_SHELL_HOSTNAME bash -i &
 
-/bin/jump /jump.yml /tmp/jump.json &
+ONCE=true /bin/jump /jump.yml /tmp/jump.json
+jq --arg placeholder \$SSH_PORT --arg port $SSH_PORT \
+  '.prompts | map((select(.port == $placeholder) | .port) |= $port) | { prompts: .}' \
+    /tmp/jump.json > /tmp/prompts.json
 
-export CASED_SHELL_HOST_FILE=/tmp/jump.json
+export CASED_SHELL_HOST_FILE=/tmp/prompts.json
 
 python -u run.py --logging=$CASED_SHELL_LOG_LEVEL &
 ps axjf

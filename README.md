@@ -87,7 +87,6 @@ gcloud compute networks vpc-access connectors create cased-shell-vpc-connector \
 --region us-central1 \
 --range 10.8.0.0/28
 ```
-
 ### Re-deploy the shell and connect it to your VPC
 
 ```
