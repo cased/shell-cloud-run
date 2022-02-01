@@ -11,9 +11,18 @@ export CASED_SHELL_TLS=off
 export STORAGE_DIR=$HOME/.cased-shell
 : ${CASED_SHELL_LOG_LEVEL:="error"}
 
-/bin/jump /jump.yml /tmp/jump.json &
+let CLOUDSHELL_PORT=PORT+1 ;
+export CASED_SHELL_OAUTH_UPSTREAM=localhost:$CLOUDSHELL_PORT
 
-export CASED_SHELL_HOST_FILE=/tmp/jump.json
+echo "starting ssh server"
+PORT=$CLOUDSHELL_PORT /bin/ssh-oauth-handlers cloudshell https://$CASED_SHELL_HOSTNAME default &
+
+ONCE=true /bin/jump /jump.yml /tmp/jump.json
+jq --arg placeholder \$CLOUDSHELL_PORT --arg port $CLOUDSHELL_PORT \
+  '.prompts | map((select(.port == $placeholder) | .port) |= $port) | { prompts: .}' \
+    /tmp/jump.json > /tmp/prompts.json
+
+export CASED_SHELL_HOST_FILE=/tmp/prompts.json
 
 python -u run.py --logging=$CASED_SHELL_LOG_LEVEL &
 ps axjf

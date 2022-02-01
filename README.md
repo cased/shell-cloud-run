@@ -8,6 +8,7 @@ An example deployment of [Cased Shell](https://cased.com) on Google Cloud Run.
 gcloud iam service-accounts create cased-shell
 
 gcloud run deploy cased-shell \
+  --region=us-central1 \
   --service-account=cased-shell \
   --port=8888 \
   --allow-unauthenticated \
@@ -20,15 +21,23 @@ gcloud run deploy cased-shell \
 * Obtain the value of CASED_SHELL_SECRET from the settings tab
 * Enable Certificate Authentication on the settings tab
 
+## Create `.env`
+
+```
+echo "CASED_SHELL_HOSTNAME=cased-shell-EXAMPLE-uc.a.run.app" >> .env
+echo "CASED_SHELL_SECRET=YOUR_SECRET_000000000000" >> .env
+```
+
 ### Deploy the authenticated shell
 
 ```
 gcloud run deploy cased-shell \
+  --region=us-central1 \
   --service-account=cased-shell \
   --port=8888 \
   --allow-unauthenticated \
   --source=. \
-  --set-env-vars="CASED_SHELL_HOSTNAME=<your hostname>,CASED_SHELL_SECRET=<your secret>"
+  --set-env-vars="$(cat .env | tr '\n' ',')"
 ```
 ## Connecting to resources in a VPC
 
@@ -57,26 +66,6 @@ Create a user on the instance and add the SSH certificate to the user's authoriz
 gcloud compute ssh cased-shell@example-bastion --command="curl https://<Cased Shell Hostname>/.ssh/authorized_keys >> ~/.ssh/authorized_keys"
 ```
 
-Optionally, add the following to the end of `~/.bashrc` to individually authenticate users of bastion node with their own Google Cloud accounts:
-
-```
-# Create and enter a temporary directory
-dir=$HOME/$$
-mkdir -p $dir
-cd $dir
-
-# Clean it up when we're done
-trap "rm -rf $dir" EXIT
-
-export HOME=$dir
-
-# Login to gcloud when commands are interactive or gcloud related
-if [ "$0" == "-bash" ] || grep -q "gcloud" <<< "$BASH_EXECUTION_STRING"; then
-  gcloud config set account NONE
-  gcloud auth login --brief --no-launch-browser
-fi
-```
-
 ### Create a VPC Connector
 
 > https://cloud.google.com/vpc/docs/configure-serverless-vpc-access#create-connector
@@ -87,7 +76,6 @@ gcloud compute networks vpc-access connectors create cased-shell-vpc-connector \
 --region us-central1 \
 --range 10.8.0.0/28
 ```
-
 ### Re-deploy the shell and connect it to your VPC
 
 ```
@@ -96,6 +84,48 @@ gcloud run deploy cased-shell \
   --port=8888 \
   --allow-unauthenticated \
   --source=. \
-  --set-env-vars="CASED_SHELL_HOSTNAME=<your hostname>,CASED_SHELL_SECRET=<your secret>" \
-  --vpc-connector=cased-shell-vpc-connector
+  --vpc-connector=cased-shell-vpc-connector \
+  --set-env-vars="$(cat .env | tr '\n' ',')"
+```
+
+### Connect to Google Cloud OAuth to enable Cloudshell integration
+
+* Visit the Cloud Console: https://console.cloud.google.com
+* Select or create a project from the top right project dropdown
+* In the project Dashboard center pane, choose "API Manager"
+* In the left Nav pane, choose "Credentials"
+* In the center pane, choose "OAuth consent screen" tab. Fill in "Product name shown to users" and hit save.
+* In the center pane, choose "Credentials" tab.
+  * Open the "New credentials" drop down
+  * Choose "OAuth client ID"
+  * Choose "Web application"
+  * Application name is freeform, choose something appropriate
+  * Authorized JavaScript origins can be blank
+  * Authorized redirect URIs is https://$CASED_SHELL_HOSTNAME/oauth/auth/callback
+* Choose "Create"
+* Add Client ID and Client Secret to `.env`:
+
+```
+echo "GCLOUD_OAUTH_CLIENT_ID=EXAMPLE_1234" >> .env
+echo "GCLOUD_OAUTH_CLIENT_SECRET=YOUR_SECRET_000000000000" >> .env
+```
+
+* Generate cookie encryption tokens and add to `.env`:
+
+```
+echo "COOKIE_SECRET=$(openssl rand -hex 32)" >> .env
+echo "COOKIE_ENCRYPT=$(openssl rand -hex 16)" >> .env
+```
+
+Now deploy again:
+
+```
+gcloud run deploy cased-shell \
+  --source=. \
+  --region=us-central1 \
+  --service-account=cased-shell \
+  --port=8888 \
+  --allow-unauthenticated \
+  --vpc-connector=cased-shell-vpc-connector \
+  --set-env-vars="$(cat .env | tr '\n' ',')"
 ```

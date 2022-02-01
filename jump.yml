@@ -2,20 +2,101 @@
 queries:
   - provider: static
     prompt:
-      name: example bastion
-      description: bastion vm
+      name: top
+      description: a shared tmux session running top on the bastion
       featured: true
       username: cased-shell
       hostname: 10.128.0.4
+      # attach to or create a single tmux session
+      shellCommand: tmux attach -t top || tmux new-session -s top top
       labels:
-        app: bastion
+        app: tmux
+        type: command
+
+  - provider: static
+    prompt:
+      name: shared tmux a
+      description: a bastion authorized with personal credentials or a serviceaccount
+      featured: true
+      username: cased-shell
+      hostname: 10.128.0.4
+      # attach to or create a single tmux session
+      shellCommand: tmux attach -t shared-a || tmux new-session -s shared-a
+      labels:
+        app: tmux
+        type: interactive
+
+  - provider: static
+    prompt:
+      name: shared tmux b
+      description: a bastion authorized with personal credentials or a serviceaccount
+      featured: true
+      username: cased-shell
+      hostname: 10.128.0.4
+      # attach to or create a single tmux session
+      shellCommand: tmux attach -t shared-b || tmux new-session -s shared-b
+      labels:
+        app: tmux
+        type: interactive
+
+  - provider: static
+    prompt:
+      name: bastion vm
+      description: bash on the bastion
+      username: cased-shell
+      hostname: 10.128.0.4
+      closeTerminalOnExit: false
+      labels:
+        app: bash
         type: interactive
 
   - provider: static
     prompt:
       name: list instances
-      description: list all compute instances
+      description: run a command on a bastion vm
       username: cased-shell
       hostname: 10.128.0.4
-      shellCommand: bash -ic 'gcloud compute instances list'
+      shellCommand: gcloud compute instances list --project cased-shell-demos
+      closeTerminalOnExit: false
+      labels:
+        app: gcloud
+        type: command
+
+  - provider: static
+    prompt:
+      name: cloudshell
+      description: cloudshell authorized with your OAuth credentials
+      featured: true
+      username: cased
+      hostname: localhost
+      port: $CLOUDSHELL_PORT
+      labels:
+        app: bash
+        type: interactive
+
+  - provider: static
+    prompt:
+      name: cloudshell w/ proxy
+      description: cloudshell authorized with your OAuth credentials, with a proxy running in the background
+      featured: true
+      username: cased
+      hostname: localhost
+      port: $CLOUDSHELL_PORT
+      shellCommand: bash -c 'echo running example proxy in background...; echo; exec bash -i'
+      labels:
+        app: bash
+        type: interactive
+
+  - provider: static
+    prompt:
+      name: list compute instances
+      description: a predefined command executed in your cloudshell
+      featured: true
+      username: cased
+      hostname: localhost
+      port: $CLOUDSHELL_PORT
+      shellCommand: gcloud compute instances list --project cased-shell-demos
+      labels:
+        app: gcloud
+        type: command
       closeTerminalOnExit: false
