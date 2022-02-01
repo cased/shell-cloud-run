@@ -2,13 +2,52 @@
 queries:
   - provider: static
     prompt:
-      name: example bastion
-      description: bastion vm
+      name: top
+      description: a shared tmux session running top on the bastion
       featured: true
       username: cased-shell
       hostname: 10.128.0.4
+      # attach to or create a single tmux session
+      shellCommand: tmux attach -t top || tmux new-session -s top top
       labels:
-        app: bastion
+        app: tmux
+        type: command
+
+  - provider: static
+    prompt:
+      name: shared tmux a
+      description: a bastion authorized with personal credentials or a serviceaccount
+      featured: true
+      username: cased-shell
+      hostname: 10.128.0.4
+      # attach to or create a single tmux session
+      shellCommand: tmux attach -t shared-a || tmux new-session -s shared-a
+      labels:
+        app: tmux
+        type: interactive
+
+  - provider: static
+    prompt:
+      name: shared tmux b
+      description: a bastion authorized with personal credentials or a serviceaccount
+      featured: true
+      username: cased-shell
+      hostname: 10.128.0.4
+      # attach to or create a single tmux session
+      shellCommand: tmux attach -t shared-b || tmux new-session -s shared-b
+      labels:
+        app: tmux
+        type: interactive
+
+  - provider: static
+    prompt:
+      name: bastion vm
+      description: bash on the bastion
+      username: cased-shell
+      hostname: 10.128.0.4
+      closeTerminalOnExit: false
+      labels:
+        app: bash
         type: interactive
 
   - provider: static
