@@ -6,7 +6,7 @@ queries:
       description: a shared tmux session running top on the bastion
       featured: true
       username: cased-shell
-      hostname: 10.128.0.4
+      hostname: 10.128.0.5
       # attach to or create a single tmux session
       shellCommand: tmux attach -t top || tmux new-session -s top top
       labels:
@@ -19,7 +19,7 @@ queries:
       description: a bastion authorized with personal credentials or a serviceaccount
       featured: true
       username: cased-shell
-      hostname: 10.128.0.4
+      hostname: 10.128.0.5
       # attach to or create a single tmux session
       shellCommand: tmux attach -t shared-a || tmux new-session -s shared-a
       labels:
@@ -32,7 +32,7 @@ queries:
       description: a bastion authorized with personal credentials or a serviceaccount
       featured: true
       username: cased-shell
-      hostname: 10.128.0.4
+      hostname: 10.128.0.5
       # attach to or create a single tmux session
       shellCommand: tmux attach -t shared-b || tmux new-session -s shared-b
       labels:
@@ -44,7 +44,7 @@ queries:
       name: bastion vm
       description: bash on the bastion
       username: cased-shell
-      hostname: 10.128.0.4
+      hostname: 10.128.0.5
       closeTerminalOnExit: false
       labels:
         app: bash
@@ -55,7 +55,7 @@ queries:
       name: list instances
       description: run a command on a bastion vm
       username: cased-shell
-      hostname: 10.128.0.4
+      hostname: 10.128.0.5
       shellCommand: gcloud compute instances list --project cased-shell-demos
       closeTerminalOnExit: false
       labels:
