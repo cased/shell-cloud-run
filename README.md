@@ -129,3 +129,39 @@ gcloud run deploy cased-shell \
   --vpc-connector=cased-shell-vpc-connector \
   --set-env-vars="$(cat .env | tr '\n' ',')"
 ```
+
+## Setup a Cloud Storage Bucket
+
+[Create a bucket](https://cloud.google.com/storage/docs/creating-buckets#create_a_new_bucket):
+
+```
+gsutil mb gs://cased-shell-EXAMPLE
+```
+
+Grant the service account the objectAdmin role on the bucket:
+
+```
+gsutil iam ch \
+  serviceAccount:cased-shell@EXAMPLE.iam.gserviceaccount.com:objectAdmin,legacyBucketReader \
+  gs://cased-shell-EXAMPLE
+```
+
+Add the bucket name to the environment:
+
+```
+echo "STORAGE_GOOGLE_CLOUD_BUCKET=cased-shell-EXAMPLE" >> .env
+echo "STORAGE_BACKEND=gcs" >> .env
+```
+
+Now deploy again:
+
+```
+gcloud run deploy cased-shell \
+  --source=. \
+  --region=us-central1 \
+  --service-account=cased-shell \
+  --port=8888 \
+  --allow-unauthenticated \
+  --vpc-connector=cased-shell-vpc-connector \
+  --set-env-vars="$(cat .env | tr '\n' ',')"
+```
