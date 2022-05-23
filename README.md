@@ -170,3 +170,11 @@ gcloud run deploy cased-shell \
   --vpc-connector=cased-shell-vpc-connector \
   --set-env-vars="$(cat .env | tr '\n' ',')"
 ```
+
+## Viewing logs
+
+Cloud Run logs are visible in the console at:
+
+https://console.cloud.google.com/run/detail/<region>/<service>/logs
+
+See https://cloud.google.com/run/docs/logging for more information
