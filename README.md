@@ -13,6 +13,7 @@ gcloud run deploy cased-shell \
   --port=8888 \
   --allow-unauthenticated \
   --source=. \
+  --max-instances=1 \
   --set-env-vars="CASED_SHELL_SECRET=default"
 ```
 
@@ -37,6 +38,7 @@ gcloud run deploy cased-shell \
   --port=8888 \
   --allow-unauthenticated \
   --source=. \
+  --max-instances=1 \
   --set-env-vars="$(cat .env | tr '\n' ',')"
 ```
 ## Connecting to resources in a VPC
@@ -84,6 +86,7 @@ gcloud run deploy cased-shell \
   --port=8888 \
   --allow-unauthenticated \
   --source=. \
+  --max-instances=1 \
   --vpc-connector=cased-shell-vpc-connector \
   --set-env-vars="$(cat .env | tr '\n' ',')"
 ```
@@ -122,6 +125,7 @@ Now deploy again:
 ```
 gcloud run deploy cased-shell \
   --source=. \
+  --max-instances=1 \
   --region=us-central1 \
   --service-account=cased-shell \
   --port=8888 \
@@ -158,6 +162,7 @@ Now deploy again:
 ```
 gcloud run deploy cased-shell \
   --source=. \
+  --max-instances=1 \
   --region=us-central1 \
   --service-account=cased-shell \
   --port=8888 \
