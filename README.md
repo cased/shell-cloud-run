@@ -180,6 +180,6 @@ gcloud run deploy cased-shell \
 
 Cloud Run logs are visible in the console at:
 
-https://console.cloud.google.com/run/detail/<region>/<service>/logs
+https://console.cloud.google.com/run/detail/$REGION/$SERVICE/logs
 
 See https://cloud.google.com/run/docs/logging for more information
