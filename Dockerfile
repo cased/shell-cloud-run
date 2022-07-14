@@ -1,6 +1,6 @@
 # Imports the latest release of Cased Shell into a registry
 # supported by Google Cloud Run (https://cloud.google.com/run/docs/deploying#other-registries)
-FROM ghcr.io/cased/shell:pr-223
+FROM ghcr.io/cased/shell:pr-229
 COPY --from=ghcr.io/cased/jump:latest /bin/app /bin/jump
 COPY --from=ghcr.io/cased/ssh-oauth-handlers:main /bin/app /bin/ssh-oauth-handlers
 ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]
